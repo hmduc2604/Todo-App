@@ -3,15 +3,25 @@
 import { useState } from "react";
 import { Pencil, Trash, Check } from "lucide-react";
 import { useTodo } from "@/context/TodoContext";
+import { useToast } from "@/context/ToastContext";
 
 interface TodoItemProps {
   id: string;
   title: string;
   completed: boolean;
+  isSelected: boolean;
+  onToggleSelect: (id: string) => void;
 }
 
-export default function TodoItem({ id, title, completed }: TodoItemProps) {
+export default function TodoItem({
+  id,
+  title,
+  completed,
+  isSelected,
+  onToggleSelect,
+}: TodoItemProps) {
   const { dispatch } = useTodo();
+  const { showToast } = useToast();
 
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(title);
@@ -24,13 +34,18 @@ export default function TodoItem({ id, title, completed }: TodoItemProps) {
   };
 
   const handleDeleteTodo = () => {
-    const confirmed = window.confirm("Delete this task?");
-
-    if (!confirmed) return;
+    const deletedTodo = { id, title, completed };
 
     dispatch({
       type: "DELETE_TODO",
       payload: id,
+    });
+
+    showToast(`Đã xóa "${title}"`, () => {
+      dispatch({
+        type: "RESTORE_TODO",
+        payload: deletedTodo,
+      });
     });
   };
 
@@ -55,11 +70,30 @@ export default function TodoItem({ id, title, completed }: TodoItemProps) {
   };
 
   return (
-    <div className="flex items-center justify-between rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-slate-600 dark:bg-[#1E2939]">
-      <div className="flex items-center gap-4">
+    <div
+      className={`flex items-center justify-between rounded-xl border p-3 shadow-sm transition sm:p-5 ${
+        isSelected
+          ? "border-blue-400 bg-blue-50 dark:border-blue-500 dark:bg-blue-950/30"
+          : "border-zinc-200 bg-white dark:border-slate-600 dark:bg-[#1E2939]"
+      }`}
+    >
+      <div className="flex items-center gap-3 sm:gap-4">
+        {/* Selection checkbox */}
+        <button
+          onClick={() => onToggleSelect(id)}
+          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition ${
+            isSelected
+              ? "border-blue-500 bg-blue-500 text-white"
+              : "border-zinc-300 bg-transparent dark:border-slate-500"
+          }`}
+        >
+          {isSelected && <Check size={12} />}
+        </button>
+
+        {/* Completion toggle */}
         <button
           onClick={handleToggleTodo}
-          className={`flex h-5 w-5 items-center justify-center rounded border transition ${
+          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border transition ${
             completed
               ? "border-black bg-black text-white"
               : "border-black bg-transparent dark:border-slate-300"
@@ -94,7 +128,7 @@ export default function TodoItem({ id, title, completed }: TodoItemProps) {
         )}
       </div>
 
-      <div className="flex gap-4">
+      <div className="flex gap-3 sm:gap-4">
         {isEditing ? (
           <button
             onClick={handleSaveEdit}
@@ -108,7 +142,7 @@ export default function TodoItem({ id, title, completed }: TodoItemProps) {
           </button>
         )}
 
-        <button onClick={handleDeleteTodo} className="cursor-pointer1">
+        <button onClick={handleDeleteTodo} className="cursor-pointer">
           <Trash size={18} />
         </button>
       </div>

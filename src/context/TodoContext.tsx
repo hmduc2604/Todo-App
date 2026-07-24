@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useReducer } from "react";
+import { createContext, useContext, useEffect, useReducer } from "react";
 
 import { initialState, todoReducer } from "@/reducers/todoReducer";
 
@@ -19,7 +19,9 @@ const TodoContext = createContext<TodoContextType | null>(null);
 
 export function TodoProvider({ children }: Props) {
   const [state, dispatch] = useReducer(todoReducer, initialState);
-
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(state.todos));
+  }, [state.todos]);
   return (
     <TodoContext.Provider
       value={{

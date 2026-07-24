@@ -1,26 +1,34 @@
 "use client";
 
 import Image from "next/image";
-import { Menu, ListTodo, Settings } from "lucide-react";
+import { Menu, ListTodo, Settings, X } from "lucide-react";
 
 interface SidebarProps {
   isOpen: boolean;
+  isMobile: boolean;
   onToggle: () => void;
 }
 
-export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
+export default function Sidebar({ isOpen, isMobile, onToggle }: SidebarProps) {
   return (
     <aside
-      className={`fixed left-0 top-0 flex h-screen flex-col border-r transition-all duration-300
+      className={`fixed left-0 top-0 z-50 flex h-screen flex-col border-r transition-all duration-300
   dark:border-zinc-800 dark:bg-[#1D2B44]
-  ${isOpen ? "w-60 bg-white p-4" : "w-20 bg-white p-4"}`}
+  ${isMobile
+          ? isOpen
+            ? "w-64 translate-x-0 bg-white p-4 shadow-2xl"
+            : "-translate-x-full w-64 bg-white p-4"
+          : isOpen
+            ? "w-60 bg-white p-4"
+            : "w-20 bg-white p-4"
+        }`}
     >
-      {/* Hamburger */}
+      {/* Hamburger / Close */}
       <button
         onClick={onToggle}
         className="mb-6 cursor-pointer self-start rounded-lg p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800"
       >
-        <Menu size={28} />
+        {isMobile && isOpen ? <X size={28} /> : <Menu size={28} />}
       </button>
 
       {isOpen ? (
@@ -56,27 +64,29 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
           </div>
         </>
       ) : (
-        <>
-          <div className="mt-6 flex flex-col items-center gap-6">
-            <button className="rounded-xl p-3 hover:bg-zinc-100 dark:hover:bg-zinc-800">
-              <ListTodo size={22} />
-            </button>
+        !isMobile && (
+          <>
+            <div className="mt-6 flex flex-col items-center gap-6">
+              <button className="rounded-xl p-3 hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                <ListTodo size={22} />
+              </button>
 
-            <button className="rounded-xl p-3 hover:bg-zinc-100 dark:hover:bg-zinc-800">
-              <Settings size={22} />
-            </button>
-          </div>
+              <button className="rounded-xl p-3 hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                <Settings size={22} />
+              </button>
+            </div>
 
-          <div className="mt-auto flex justify-center">
-            <Image
-              src="/Selfie.png"
-              alt="avatar"
-              width={42}
-              height={42}
-              className="rounded-full"
-            />
-          </div>
-        </>
+            <div className="mt-auto flex justify-center">
+              <Image
+                src="/Selfie.png"
+                alt="avatar"
+                width={42}
+                height={42}
+                className="rounded-full"
+              />
+            </div>
+          </>
+        )
       )}
     </aside>
   );

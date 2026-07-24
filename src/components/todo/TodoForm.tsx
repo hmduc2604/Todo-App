@@ -22,7 +22,7 @@ export default function TodoForm() {
   };
 
   return (
-    <div className="flex items-center justify-center gap-4">
+    <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-center sm:gap-4">
       <input
         type="text"
         value={title}
@@ -33,12 +33,12 @@ export default function TodoForm() {
           }
         }}
         placeholder="Type your task here.."
-        className="h-12 w-[320px] rounded-lg border border-zinc-300 bg-white px-4 text-black shadow-sm outline-none transition dark:border-[#4A5565] dark:bg-[#4A5565] dark:text-white dark:placeholder:text-zinc-300"
+        className="h-12 w-full rounded-lg border border-zinc-300 bg-white px-4 text-black shadow-sm outline-none transition sm:max-w-[320px] dark:border-[#4A5565] dark:bg-[#4A5565] dark:text-white dark:placeholder:text-zinc-300"
       />
 
       <button
         onClick={handleAddTodo}
-        className="h-12 rounded-lg bg-black px-8 font-medium text-white transition dark:bg-[#4A5565]"
+        className="h-12 shrink-0 rounded-lg bg-black px-8 font-medium text-white transition dark:bg-[#4A5565]"
       >
         + Add
       </button>
